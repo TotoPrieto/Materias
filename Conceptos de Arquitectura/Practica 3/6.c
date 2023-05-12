@@ -1,0 +1,99 @@
+;Escribir un programa que solicite ingresar caracteres por teclado y que recién al presionar la
+;tecla F10 los envíe a la impresora a través de la PIO. No es necesario mostrar los caracteres 
+;en la pantalla. Ejecutar en configuración P1 C1 del simulador.
+PIC EQU 20H
+F10 EQU 24H
+PA  EQU 30H
+PB EQU 31H
+CA EQU 32H
+CB EQU 33H
+N_F10 EQU 10
+
+ORG 40
+ID_F10 DW SUB_F10
+
+ORG 1000H 
+CAR DB ?
+DB ?
+DB ?
+FIN_C DB ?
+
+
+ORG 3000H 
+CREAR:MOV AL, 0
+OUT CB, AL
+
+MOV AL, 0FDH
+OUT CA, AL
+
+IN AL, PA
+AND AL, 0FDH
+OUT PA, AL
+
+RET
+
+LEER:PUSH AX
+PUSH BX
+PUSH CX
+PUSH DX
+LOOP:INT 6
+INC BX
+CMP BX, CX
+JNZ LOOP
+POP DX
+POP CX
+POP BX
+POP AX
+RET
+
+
+
+
+SUB_F10:PUSH AX
+PUSH BX
+PUSH CX
+PUSH DX
+RECU:IN AL, PA
+AND AL, 1
+JNZ RECU
+MOV CL, OFFSET FIN_C-OFFSET CAR
+RECU2:CMP CL, 0
+JZ TERMINO
+MOV AL, [BX]
+OUT PB, AL
+INC BX
+IN AL, PA
+OR AL, 02H
+OUT PA, AL
+IN AL, PA
+AND AL, 0FDH
+OUT PA, AL
+DEC CL
+JNZ RECU2
+TERMINO:MOV AL, 20H
+OUT PIC, AL
+
+POP DX
+POP CX
+POP BX
+POP AX
+IRET
+
+ORG 2000H 
+
+CLI
+MOV AX, 11111110b
+OUT PIC+1, AL
+
+MOV AL, N_F10
+OUT F10, AL 
+
+CALL CREAR
+MOV BX, OFFSET CAR
+MOV CX, OFFSET FIN_C
+CALL LEER
+STI
+
+POLL:JMP POLL
+INT 0
+END

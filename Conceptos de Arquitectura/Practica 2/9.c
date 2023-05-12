@@ -1,0 +1,62 @@
+;Escribir un programa que aguarde el ingreso de una clave de cuatro caracteres por 
+;teclado sin visualizarla en pantalla. En 
+;caso de coincidir con una clave predefinida (y guardada en memoria) que muestre el
+;mensaje "Acceso permitido", caso 
+;contrario el mensaje "Acceso denegado"
+
+ORG 1000H
+MSJ0 DB "Ingresar clave"
+FIN0 DB ?
+MSJ1 DB "Acceso denegado"
+FIN1 DB ?
+MSJ2 DB "Acceso permitido"
+FIN2 DB ?
+CLAVE DB "1420"
+ING DB ?
+ORG 3000H
+ERROR:MOV BX, OFFSET MSJ1
+MOV AL, OFFSET FIN1-OFFSET MSJ1
+INT 7
+JMP VOLVER
+
+EXITO:MOV BX, OFFSET MSJ2
+MOV AL, OFFSET FIN2-OFFSET MSJ2
+INT 7
+JMP VOLVER
+
+
+
+COMPARO:MOV DX, 4 ;CANTIDAD DE CARACTERES DE CLAVE
+MOV CL,ING ;PAAO LA CLAVE INGRESADA
+MOV AL, CLAVE;CLAVE VALIDA
+REC2:CMP AL,CL
+JNZ ERROR;SI DIFIERE ERROR
+DEC DX;YA COMPARO UNO, ASI QUE RESTA A LA CANTIDAD
+JZ EXITO;CUANDO LLEGA A CERO TERMINA, SINO COMPARA EL SIGUIENTE DIGITO
+MOV CL, [BX]
+ADD BX, 4
+MOV AL, [BX]
+SUB BX, 3
+JMP REC2
+VOLVER:RET
+
+
+
+
+ORG 2000H
+
+REC:MOV BX, OFFSET MSJ0
+MOV AL, OFFSET FIN0-OFFSET MSJ0
+INT 7
+MOV BX, OFFSET ING
+INT 6
+MOV BX, OFFSET ING+1
+INT 6
+MOV BX, OFFSET ING+2
+INT 6
+MOV BX, OFFSET ING+3
+INT 6
+MOV BX, OFFSET CLAVE
+CALL COMPARO
+HLT
+END
