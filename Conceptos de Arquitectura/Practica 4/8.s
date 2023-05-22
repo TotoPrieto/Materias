@@ -1,0 +1,2 @@
+;Escribir un programa que multiplique dos números enteros utilizando sumas repetidas (similar al Ejercicio 7 de la Práctica 1). 
+;El programa debe estar optimizado para su ejecución con la opción Delay Slot habilitada

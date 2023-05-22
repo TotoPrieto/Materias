@@ -44,4 +44,4 @@ fin:    sd r5, D(r0)
 halt
 
 ;5 RAW
-;5 Branch Taquen
+;5 Branch Taken
