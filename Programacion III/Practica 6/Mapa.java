@@ -21,6 +21,8 @@ public class Mapa {
 
   //Metodos
 
+
+//1
   public ListaGenerica<String> devoolverCamino(String ciudad1, String ciudad2){
     ListaGenerica<String> listaCaminos = new ListaGenericaEnlazada<String>();
     
@@ -32,7 +34,7 @@ public class Mapa {
 
         //Doy por hecho que es un unico grafo conexo, porque si no se conectan chau.
         
-        dfs(listaCaminos, visitado, origen, ciudad2);
+        devolverCamino(listaCaminos, visitado, origen, ciudad2);
       
       }
       
@@ -41,7 +43,7 @@ public class Mapa {
 }
 
 
-  public void dfs (ListaGenerica<String> listaCamino, boolean[] visitado, Vertice<String> vActual, String destino){
+  private void devolverCamino (ListaGenerica<String> listaCamino, boolean[] visitado, Vertice<String> vActual, String destino){
     visitado[vActual.posicion()]=true;  
     
     if(vActual.dato().equals(destino)){  
@@ -50,12 +52,13 @@ public class Mapa {
     }else{
       ListaGenerica<Arista<String>> ady= mapaCiudades.listaDeAdyacentes(vActual);
       ady.comenzar();
-      
+      Arista<String> siguiente=null;
+
       while(!ady.fin()&&(listaCamino.esVacia())){
-        Arista<String> siguiente= ady.proximo();
+        siguiente= ady.proximo();
         //si el siguiente Vertice ya fue visitado, pregunto por otro
         if(!visitado[siguiente.verticeDestino().posicion()])
-          dfs(listaCamino, visitado, siguiente.verticeDestino(), destino);
+          devolverCamino(listaCamino, visitado, siguiente.verticeDestino(), destino);
   
       }  
       //Una vez que sale(porque puede ser que la lista ya no este vacia) pregunta si agrega si ciudad, y vuelve de la recursion
@@ -64,7 +67,7 @@ public class Mapa {
     }
     }
   
-  public Vertice<String> devolverVerice(String c1){
+  private Vertice<String> devolverVerice(String c1){
     
     Vertice<String> vertAct=null;
 
@@ -82,4 +85,61 @@ public class Mapa {
   }
 
 
+  //2
+  public ListaGenerica<String> devolverCaminoExceptuando (String ciudad1, String ciudad2, ListaGenerica<String> ciudades){
+    ListaGenerica<String> listaCaminos = new ListaGenericaEnlazada<String>();
+    
+    if(!mapaCiudades.esVacio()){
+      boolean[] visitado= new boolean[mapaCiudades.listaDeVertices().tamanio()];
+      Vertice<String> origen= devolverVerice(ciudad1);
+    
+      if (origen.dato().equals(ciudad1)){
+
+        //Doy por hecho que es un unico grafo conexo, porque si no se conectan chau.
+        
+        devolverCaminoExceptuando(listaCaminos, ciudades, visitado, origen, ciudad2);
+      
+      }
+      
+    }
+
+    return listaCaminos;
+  }
+
+  private void devolverCaminoExceptuando(ListaGenerica<String> listaCamino, ListaGenerica<String> ciudades,boolean[] visitado, Vertice<String> vActual, String destino){
+    
+    visitado[vActual.posicion()]=true;  
+    
+    if(vActual.dato().equals(destino) && !pertenece(vActual.dato(),ciudades)){  
+      listaCamino.agregarInicio(vActual.dato());
+  
+    }else{
+      ListaGenerica<Arista<String>> ady= mapaCiudades.listaDeAdyacentes(vActual);
+      ady.comenzar();
+      
+      while(!ady.fin()&&(listaCamino.esVacia())){
+        Arista<String> siguiente= ady.proximo();
+        //si el siguiente Vertice ya fue visitado, pregunto por otro
+        if(!visitado[siguiente.verticeDestino().posicion()])
+          devolverCaminoExceptuando(listaCamino, ciudades, visitado, siguiente.verticeDestino(), destino);
+  
+      }  
+      //Una vez que sale(porque puede ser que la lista ya no este vacia) pregunta si agrega si ciudad, y vuelve de la recursion
+      if(!listaCamino.esVacia())
+        listaCamino.agregarInicio(vActual.dato());
+    }
+    }
+
+  private boolean pertenece(String actual, ListaGenerica<String> ciudades){
+    if(!ciudades.esVacia()){
+      ciudades.comenzar();
+      String aux;
+      while(!ciudades.fin()){
+        aux= ciudades.proximo();
+        if(actual.equals(aux))
+          return true;
+      }    
+  }
+  return false;
+}
 }
