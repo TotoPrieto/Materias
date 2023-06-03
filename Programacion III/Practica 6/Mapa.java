@@ -142,4 +142,64 @@ public class Mapa {
   }
   return false;
 }
+
+
+//3
+public ListaGenerica<String> caminoMasCorto(String ciudad1, String ciudad2){
+  ListaGenerica<String> listaCorto= new ListaGenericaEnlazada<String>();
+  ListaGenerica<String> posibleMin= new ListaGenericaEnlazada<String>();
+  if(!mapaCiudades.esVacio()){
+    boolean[] visitado= new boolean[mapaCiudades.listaDeVertices().tamanio()];
+    Vertice<String> origen =devolverVerice(ciudad1);
+    if(origen.dato().equals(ciudad2)){
+      int min=9999;
+      int pesoActual=0;
+      caminoMasCorto(listaCorto, origen, min, ciudad2, visitado, posibleMin, pesoActual);
+
+    }
+  }
+  return listaCorto;
+}
+
+//Lo hago que devuelva un int para poder alterar el minimo, y encontrar el mas corto. La lista al ser dinamica se devuelve sola.
+private int caminoMasCorto(ListaGenerica<String> listaCorto, Vertice<String> actual, int min, String c2, boolean[] visitado, ListaGenerica<String> posibleMin, int pesoActual){
+  visitado[actual.posicion()]=true;
+  posibleMin.agregarFinal(actual.dato());
+  
+  if(actual.dato().equals(c2)){
+    visitado[actual.posicion()]=false; //Asi otros caminos pueden llegar de vuelta a esta ciudad
+  
+    if(min>pesoActual){
+      listaCorto= clonar(posibleMin); //Como es mas corto clona la lista a la lista importante
+      posibleMin.eliminar(c2);
+      return pesoActual; // Hago que pesoActual sea por referencia
+    }
+  }
+
+  ListaGenerica<Arista<String>> ady= mapaCiudades.listaDeAdyacentes(actual);
+  ady.comenzar();  
+    
+  while(!ady.fin()){
+    Arista<String> siguiente= ady.proximo();
+    pesoActual+=siguiente.peso(); //Solo lo uso para saber cual de los caminos esta mas cerca. 
+  
+    if(!visitado[siguiente.verticeDestino().posicion()])
+      min=caminoMasCorto(listaCorto, siguiente.verticeDestino(), min, c2, visitado, posibleMin, pesoActual); //Devuelve el min asi lo puedo mantener actualizado
+  
+    visitado[siguiente.verticeDestino().posicion()]=false; //Desmarco por si otro camino pasa por aca de vuelta
+    pesoActual-=siguiente.peso();
+    }  
+    
+    posibleMin.eliminar(actual.dato());
+    return pesoActual;
+}
+
+
+public ListaGenerica<String> clonar(ListaGenerica<String> original){
+  ListaGenerica<String> nueva= new ListaGenericaEnlazada<String>();
+  original.comenzar();
+  while(!original.fin())
+    nueva.agregarFinal(original.proximo());
+  return nueva;
+}
 }
