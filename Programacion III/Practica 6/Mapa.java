@@ -22,19 +22,20 @@ public class Mapa {
   //Metodos
 
 
-//1
-  public ListaGenerica<String> devoolverCamino(String ciudad1, String ciudad2){
-    ListaGenerica<String> listaCaminos = new ListaGenericaEnlazada<String>();
-    
-    if(!mapaCiudades.esVacio()){
-      boolean[] visitado= new boolean[mapaCiudades.listaDeVertices().tamanio()];
-      Vertice<String> origen= devolverVerice(ciudad1);
-    
-      if (origen.dato().equals(ciudad1)){
+//1.    Retorna la lista de ciudades que se deben atravesar para ir de ciudad1 a ciudad2 en caso que se pueda llegar, 
+//si no retorna la lista vacía. (Sin tener en cuenta el combustible).
 
-        //Doy por hecho que es un unico grafo conexo, porque si no se conectan chau.
-        
-        devolverCamino(listaCaminos, visitado, origen, ciudad2);
+public ListaGenerica<String> devoolverCamino(String ciudad1, String ciudad2){
+  ListaGenerica<String> listaCaminos = new ListaGenericaEnlazada<String>();
+    
+  if(!mapaCiudades.esVacio()){
+    boolean[] visitado= new boolean[mapaCiudades.listaDeVertices().tamanio()];
+    Vertice<String> origen= devolverVerice(ciudad1);
+    
+    if (origen.dato().equals(ciudad1)){
+
+        //Doy por hecho que es un unico grafo conexo, porque si no se conectan chau.  
+      devolverCamino(listaCaminos, visitado, origen, ciudad2);
       
       }
       
@@ -85,7 +86,9 @@ public class Mapa {
   }
 
 
-  //2
+  //2.    Retorna la lista de ciudades que forman un camino desde ciudad1 a ciudad2, sin pasar por las ciudades que están
+  // contenidas en la lista ciudades pasada por parámetro, si no existe camino retorna la lista vacía. (Sin tener en cuenta el combustible).
+
   public ListaGenerica<String> devolverCaminoExceptuando (String ciudad1, String ciudad2, ListaGenerica<String> ciudades){
     ListaGenerica<String> listaCaminos = new ListaGenericaEnlazada<String>();
     
@@ -144,7 +147,9 @@ public class Mapa {
 }
 
 
-//3
+//3.     Retorna la lista de ciudades que forman el camino más corto para llegar de ciudad1 a ciudad2, si no existe camino retorna la lista vacía. 
+//(Las rutas poseen la distancia). (Sin tener en cuenta el combustible).
+
 public ListaGenerica<String> caminoMasCorto(String ciudad1, String ciudad2){
   ListaGenerica<String> listaCorto= new ListaGenericaEnlazada<String>();
   ListaGenerica<String> posibleMin= new ListaGenericaEnlazada<String>();
@@ -183,14 +188,14 @@ private int caminoMasCorto(ListaGenerica<String> listaCorto, Vertice<String> act
     Arista<String> siguiente= ady.proximo();
     pesoActual+=siguiente.peso(); //Solo lo uso para saber cual de los caminos esta mas cerca. 
   
-    if(!visitado[siguiente.verticeDestino().posicion()])
+    if(!visitado[siguiente.verticeDestino().posicion()]){
       min=caminoMasCorto(listaCorto, siguiente.verticeDestino(), min, c2, visitado, posibleMin, pesoActual); //Devuelve el min asi lo puedo mantener actualizado
-  
+    }
     visitado[siguiente.verticeDestino().posicion()]=false; //Desmarco por si otro camino pasa por aca de vuelta
     pesoActual-=siguiente.peso();
     }  
     
-    posibleMin.eliminar(actual.dato());
+    posibleMin.eliminar(actual.dato()); //Elimino en la lista temporal el actual, pero fuera del while porque tal vez en el mismo camino, con otra arista llega antes
     return pesoActual;
 }
 
@@ -202,4 +207,48 @@ public ListaGenerica<String> clonar(ListaGenerica<String> original){
     nueva.agregarFinal(original.proximo());
   return nueva;
 }
+
+
+
+//4.     Retorna la lista de ciudades que forman un camino para llegar de ciudad1 a ciudad2. El auto no debe quedarse sin combustible y no puede
+//cargar. Si no existe camino retorna la lista vacía.
+
+public ListaGenerica<String> caminoSinCargarCombustible(String ciudad1, String ciudad2, int tanqueAuto){
+  ListaGenerica<String> caminoSinC= new ListaGenericaEnlazada<String>();
+  
+  if(!mapaCiudades.esVacio()){
+    Vertice<String> origen= devolverVerice(ciudad1);
+
+    if(origen.dato().equals(ciudad1)){
+      boolean [] visitado= new boolean[mapaCiudades.listaDeVertices().tamanio()];
+      caminoSinCargarCombustible(caminoSinC, origen, visitado, ciudad2, tanqueAuto);
+    }
+  }
+  return caminoSinC;
+}
+//Como me pide un camino en el que llegue con el tanque y sin cargar, no reviso todos los caminos posibles. Devuelvo el primero que encuentra
+
+private void caminoSinCargarCombustible(ListaGenerica<String> caminoSinC, Vertice<String> actual, boolean [] visitado, String ciudad2, int tanqueAuto){
+  visitado[actual.posicion()]=true;
+
+  if(actual.dato().equals(ciudad2) && tanqueAuto>0){
+    caminoSinC.agregarInicio(actual.dato());
+  }else{
+
+    ListaGenerica<Arista<String>> ady= mapaCiudades.listaDeAdyacentes(actual);
+    ady.comenzar();
+    Arista<String> siguiente=null;
+    while(!ady.fin() && caminoSinC.esVacia()){
+      siguiente= ady.proximo();
+      if(!visitado[siguiente.verticeDestino().posicion()])
+        caminoSinCargarCombustible(caminoSinC, actual, visitado, ciudad2, tanqueAuto);(caminoSinC, siguiente.verticeDestino(), visitado, ciudad2, (tanqueAuto-siguiente.peso()));
+      if(!caminoSinC.esVacia())
+        caminoSinC.agregarInicio(siguiente.verticeDestino().dato());
+    }
+  }
+
+}
+     
+
+
 }
