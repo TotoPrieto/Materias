@@ -21,6 +21,7 @@ public class Mapa {
 
   //Metodos
 
+// <----------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 //1.    Retorna la lista de ciudades que se deben atravesar para ir de ciudad1 a ciudad2 en caso que se pueda llegar, 
 //si no retorna la lista vacía. (Sin tener en cuenta el combustible).
@@ -86,6 +87,8 @@ public ListaGenerica<String> devoolverCamino(String ciudad1, String ciudad2){
   }
 
 
+  // <----------------------------------------------------------------------------------------------------------------------------------------------------------------->
+  
   //2.    Retorna la lista de ciudades que forman un camino desde ciudad1 a ciudad2, sin pasar por las ciudades que están
   // contenidas en la lista ciudades pasada por parámetro, si no existe camino retorna la lista vacía. (Sin tener en cuenta el combustible).
 
@@ -146,6 +149,7 @@ public ListaGenerica<String> devoolverCamino(String ciudad1, String ciudad2){
   return false;
 }
 
+// <----------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 //3.     Retorna la lista de ciudades que forman el camino más corto para llegar de ciudad1 a ciudad2, si no existe camino retorna la lista vacía. 
 //(Las rutas poseen la distancia). (Sin tener en cuenta el combustible).
@@ -209,6 +213,7 @@ public ListaGenerica<String> clonar(ListaGenerica<String> original){
 }
 
 
+//<----------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 //4.     Retorna la lista de ciudades que forman un camino para llegar de ciudad1 a ciudad2. El auto no debe quedarse sin combustible y no puede
 //cargar. Si no existe camino retorna la lista vacía.
@@ -241,14 +246,71 @@ private void caminoSinCargarCombustible(ListaGenerica<String> caminoSinC, Vertic
     while(!ady.fin() && caminoSinC.esVacia()){
       siguiente= ady.proximo();
       if(!visitado[siguiente.verticeDestino().posicion()])
-        caminoSinCargarCombustible(caminoSinC, actual, visitado, ciudad2, tanqueAuto);(caminoSinC, siguiente.verticeDestino(), visitado, ciudad2, (tanqueAuto-siguiente.peso()));
+        caminoSinCargarCombustible(caminoSinC, siguiente.verticeDestino(), visitado, ciudad2, (tanqueAuto-siguiente.peso()));
       if(!caminoSinC.esVacia())
         caminoSinC.agregarInicio(siguiente.verticeDestino().dato());
     }
   }
 
 }
-     
 
+
+// <----------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+//5.      Retorna la lista de ciudades que forman un camino para llegar de ciudad1 a ciudad2 teniendo en cuenta que el auto debe cargar la menor
+// cantidad de veces. El auto no se debe quedar sin combustible en medio de una ruta, además puede completar su tanque al llegar a cualquier ciudad. 
+// Si no existe camino retorna la lista vacía.
+
+
+
+public ListaGenerica<String> caminoConMenorCargaDeCombustible (String ciudad1, String ciudad2, int tanqueAuto){
+  ListaGenerica<String> caminoMenosC= new ListaGenericaEnlazada<String>();
+  ListaGenerica<String> posibleCamino= new ListaGenericaEnlazada<String>();
+  if(!mapaCiudades.esVacio()){
+    boolean[] visitado= new boolean[mapaCiudades.listaDeVertices().tamanio()];
+    Vertice<String> origen =devolverVerice(ciudad1);
+    if(origen.dato().equals(ciudad2)){
+      int cant=0; //Se va a mandar cuantas veces cargo en un camino
+      int cantMin=9999; //Se va a ir actualizando esta variable y se compara con la anterior
+      caminoConMenosCargaDeCombustible(caminoMenosC, origen, cant, ciudad2, visitado, posibleCamino, cantMin, tanqueAuto);
+
+    }
+  }
+  return caminoMenosC;
+}
+
+
+// Lo hago int para poder actualizar la cantidad de veces minima que cargo
+private int caminoConMenosCargaDeCombustible(ListaGenerica<String> caminoMenosC, Vertice<String> actual, int cant, String c2, boolean[] visitado, ListaGenerica<String> posibleCamino, int cantMin, int tanque){
+  visitado[actual.posicion()]=true;
+  posibleCamino.agregarFinal(actual.dato());
+  
+  if(actual.dato().equals(c2)){
+    visitado[actual.posicion()]=false; //Asi otros caminos pueden llegar de vuelta a esta ciudad
+  
+    if(cantMin>cant && tanque>0){
+      caminoMenosC= clonar(posibleCamino); //Como es mas corto clona la lista a la lista importante
+      posibleCamino.eliminar(c2);
+      return cantMin; // Hago que pesoActual sea por referencia
+    }
+  }
+
+  ListaGenerica<Arista<String>> ady= mapaCiudades.listaDeAdyacentes(actual);
+  ady.comenzar();  
+  cant++;  
+  while(!ady.fin()){
+    Arista<String> siguiente= ady.proximo();
+    
+    if(!visitado[siguiente.verticeDestino().posicion()]){
+      cantMin=caminoConMenosCargaDeCombustible(caminoMenosC, siguiente.verticeDestino(), cant, c2, visitado, posibleCamino, cantMin, (tanque-siguiente.peso())); //Devuelve el min asi lo puedo mantener actualizado
+    }
+    visitado[siguiente.verticeDestino().posicion()]=false; //Desmarco por si otro camino pasa por aca de vuelta
+    }  
+    cant--;
+    posibleCamino.eliminar(actual.dato());
+
+
+  return cantMin;
+}
 
 }
