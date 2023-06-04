@@ -25,5 +25,5 @@ public class AristaImpl<T> implements Arista<T> {
 	}
 
 	
-}
+} 
 

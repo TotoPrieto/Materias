@@ -45,7 +45,7 @@ public class VerticeImplListAdy<T> implements Vertice<T> {
 	public void desconectar(Vertice<T> v){
 		this.obtenerAdyacentes().eliminar(this.obtenerArista(v));
 		
-	}
+	} 
 	
 	public ListaGenerica<Arista<T>> obtenerAdyacentes(){
 		return adyacentes;

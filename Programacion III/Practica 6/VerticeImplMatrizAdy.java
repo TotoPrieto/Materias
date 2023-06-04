@@ -1,7 +1,7 @@
 
 public class VerticeImplMatrizAdy<T> implements Vertice<T> {
     private T dato;
-    private int posicion;
+    private int posicion; 
     
     public VerticeImplMatrizAdy(T d){
     	dato = d;

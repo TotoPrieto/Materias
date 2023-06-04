@@ -7,7 +7,7 @@
  * */
 public class ListaGenericaEnlazada<T> extends ListaGenerica<T> {
 	/* primer nodo de la lista, si la lista esta vacia, inicio es null */
-	private NodoGenerico<T> inicio;
+	private NodoGenerico<T> inicio; 
 
 	/*
 	 * nodo actual que se va actualizando a medida que recorremos la lista, si

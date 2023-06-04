@@ -53,7 +53,7 @@ public class GrafoImplListAdy<T> implements Grafo<T> {
 	}
 		
 
-	@Override
+	@Override 
 	public boolean esVacio() {
 		
 		return vertices.esVacia();

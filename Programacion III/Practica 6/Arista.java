@@ -9,4 +9,4 @@ public interface Arista<T> {
 
   public Object getVerticeDestino();
 
-}
+} 

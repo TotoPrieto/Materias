@@ -4,7 +4,7 @@
  * implementar todas aquellas clases que quieran representar una coleccion de
  * números enteros, extendiendo esta clase
  * */
-public abstract class ListaGenerica<T> {
+public abstract class ListaGenerica<T> { 
 
 	/** permite posicionarse al principio de la lista */
 	public abstract void comenzar();

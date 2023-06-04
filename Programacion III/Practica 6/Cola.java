@@ -31,4 +31,4 @@ public class Cola<T> {
 		return nodo.tamanio()==0;
 	}
 
-}
+} 

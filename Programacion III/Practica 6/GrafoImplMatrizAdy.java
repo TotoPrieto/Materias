@@ -1,6 +1,6 @@
 public class GrafoImplMatrizAdy<T> implements Grafo<T> {
 	private ListaGenerica<Vertice<T>> vertices;
-	private int [][] matrizAdy;
+	private int [][] matrizAdy; 
 	
 	public GrafoImplMatrizAdy(int maxVert){
 		this.matrizAdy = new int [maxVert][maxVert];

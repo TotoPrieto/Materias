@@ -2,7 +2,7 @@
 /**
  * Esta clase representa un nodo de la lista de enteros enlazada.
  * */
-public class NodoGenerico<T> {
+public class NodoGenerico<T> { 
 	private T dato;
 	private NodoGenerico<T> siguiente;
 	

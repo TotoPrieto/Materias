@@ -5,4 +5,4 @@ public interface Vertice<T> {
 	public void setDato(T unDato);
 	public int posicion();
 
-}
+} 
