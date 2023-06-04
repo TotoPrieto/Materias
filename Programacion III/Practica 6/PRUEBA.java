@@ -1,6 +1,6 @@
 public class PRUEBA {
 
-  public static void main(String[] args) {
+  /*public static void main(String[] args) {
     //		Buenos Aires ------ >Rio de Janeiro <------> Mexico City
     //		 |                       |                      ||
     //		 |>                      |>                      ||
@@ -103,6 +103,7 @@ public class PRUEBA {
               System.out.println("Devolver camino New York-Paris:  "+ m.caminoConMenorCargaDeCombustible("New York", "Paris",500));
 
       }
+      */
       }
   
   
