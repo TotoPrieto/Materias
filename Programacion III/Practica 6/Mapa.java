@@ -26,7 +26,7 @@ public class Mapa {
 //1.    Retorna la lista de ciudades que se deben atravesar para ir de ciudad1 a ciudad2 en caso que se pueda llegar, 
 //si no retorna la lista vacía. (Sin tener en cuenta el combustible).
 
-public ListaGenerica<String> devoolverCamino(String ciudad1, String ciudad2){
+public ListaGenerica<String> devolverCamino(String ciudad1, String ciudad2){
   ListaGenerica<String> listaCaminos = new ListaGenericaEnlazada<String>();
     
   if(!mapaCiudades.esVacio()){
