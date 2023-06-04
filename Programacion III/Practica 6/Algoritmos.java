@@ -8,7 +8,23 @@ public class Algoritmos<T>{
 
   public boolean subgrafoCuadrado(Grafo<T> grafo){
     boolean b=false;
-    //Debe verificar si hay algun subgrafo que en 4 vertives vuelva al mismo lugar.
+    
+    if(!grafo.esVacio()){
+      int i;
+      ListaGenerica<Vertice<T>> lisV= grafo.listaDeVertices();
+      Vertice<T> act;
+      boolean[] visitado= new boolean [lisV.tamanio()];
+    
+      for(i=0; i<lisV.tamanio();i++){
+        act=lisV.elemento(i);
+        b=subgrafoCuadrado(act, lisV.proximo(), visitado, grafo); //Mando como aux al lisV.proximo() para que no se toque el act y el aux al principio
+        //No importa que en el ultimo llamado del for mande null el proximo, total su valor no lo uso hasta que recursa
+  
+        if(b==true){
+          return true;
+        }
+      }
+    }
     return b;
   }
 
@@ -59,7 +75,7 @@ public class Algoritmos<T>{
 //// Retorna true si el grafo dirigido pasado como parámetro tiene al menos un ciclo, false en caso contrario.
 
  public boolean tieneCiclo(Grafo<T> grafo){
-  boolean b;
+  boolean b=false;
   if(!grafo.esVacio()){
     int i;
     ListaGenerica<Vertice<T>> lisV= grafo.listaDeVertices();
@@ -67,9 +83,9 @@ public class Algoritmos<T>{
     boolean[] visitado= new boolean [lisV.tamanio()];
     for(i=0; i<lisV.tamanio();i++){
       act=lisV.elemento(i);
-      b=tieneCicloRec(act, lisV.proximo(), visitado, grafo); //Mando como aux al lisV.proximo() para que no se toque el act y el aux al principio
+      b=tieneCiclo(act, lisV.proximo(), visitado, grafo); //Mando como aux al lisV.proximo() para que no se toque el act y el aux al principio
       //No importa que en el ultimo llamado del for mande null el proximo, total su valor no lo uso hasta que recursa
-      
+
       if(b==true){
         return true;
       }
@@ -79,7 +95,7 @@ public class Algoritmos<T>{
  }
 
  //siempre mando el mismo actual. Lo que hago es revisar todas sus aristas para ver si alguna se conecta consigo misma
- private boolean tieneCicloRec(Vertice<T>actual, Vertice<T> aux, boolean[] visitado, Grafo<T> grafo){
+ private boolean tieneCiclo(Vertice<T>actual, Vertice<T> aux, boolean[] visitado, Grafo<T> grafo){
 
   if(actual.dato().equals(aux.dato())){
     return true;
@@ -93,7 +109,7 @@ public class Algoritmos<T>{
    sig=ady.proximo().verticeDestino();
    int pos= sig.posicion();
     if(!visitado[pos]){
-      b=tieneCicloRec(actual, sig, visitado, grafo);
+      b=tieneCiclo(actual, sig, visitado, grafo);
       if(b==true)
         return true; // Como debe buscar al menos un ciclo, al encontrar uno solo lo hago salir de la recursion
       visitado[pos]=false;  
