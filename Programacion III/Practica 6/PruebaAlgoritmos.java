@@ -16,7 +16,7 @@ public class PruebaAlgoritmos {
     ciudades.agregarVertice(v4);
     ciudades.agregarVertice(v5);
     ciudades.agregarVertice(v6);
-    ciudades.agregarVertice(v7); 
+    ciudades.agregarVertice(v7);  
 
     ciudades.conectar(v1, v3, 1);
     ciudades.conectar(v1, v2, 2);
