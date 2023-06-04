@@ -7,7 +7,7 @@ public class Algoritmos<T>{
   // Un subgrafo cuadrado es un ciclo simple de longitud 4
 
   public boolean subgrafoCuadrado(Grafo<T> grafo){
-    boolean b=true;
+    boolean b=false;
     
     if(!grafo.esVacio()){
       int i=0;
@@ -16,7 +16,7 @@ public class Algoritmos<T>{
       Vertice<T> act;
       boolean[] visitado= new boolean [lisV.tamanio()];
     
-      while(b==true && i<lisV.tamanio()){
+      while(b==false && i<lisV.tamanio()){
         longi=0;
         act=lisV.elemento(i);
         b=subgrafoCuadrado(act, lisV.proximo(), visitado, grafo, longi); //Mando como aux al lisV.proximo() para que no se toque el act y el aux al principio
@@ -29,27 +29,26 @@ public class Algoritmos<T>{
  //siempre mando el mismo actual. Lo que hago es revisar todas sus aristas para ver si alguna se conecta consigo misma
  private boolean subgrafoCuadrado(Vertice<T>actual, Vertice<T> aux, boolean[] visitado, Grafo<T> grafo, int longi){
   boolean b=false;
+  
   if(!actual.dato().equals(aux.dato()) ){
     visitado[aux.posicion()]=true;
   }
 
   if(actual.dato().equals(aux.dato()) && longi==4){
-    b=true;
+    return true;
   }else{
 
-  ListaGenerica<Arista<T>> ady= grafo.listaDeAdyacentes(actual);
+  ListaGenerica<Arista<T>> ady= grafo.listaDeAdyacentes(aux);
   ady.comenzar();
-
+  longi++;
   while(!ady.fin() && b==false){
   Arista<T> sig=ady.proximo();
    int pos= sig.verticeDestino().posicion();
-   longi++;
 
    if(!visitado[pos])
       b=subgrafoCuadrado(actual, sig.verticeDestino(), visitado, grafo, longi);
 
     visitado[pos]=false;  
-    longi--;
   }
 }
   return b;
@@ -100,17 +99,21 @@ public class Algoritmos<T>{
 
 //// Retorna true si el grafo dirigido pasado como parámetro tiene al menos un ciclo, false en caso contrario.
 
+
  public boolean tieneCiclo(Grafo<T> grafo){
   boolean b=false;
+  
   if(!grafo.esVacio()){
     int i=0;
+    int longi;
     ListaGenerica<Vertice<T>> lisV= grafo.listaDeVertices();
     Vertice<T> act;
     boolean[] visitado= new boolean [lisV.tamanio()];
-    while(i<lisV.tamanio() && b==false){
-      int longi=0;
+  
+    while(b==false && i<lisV.tamanio()){
+      longi=0;
       act=lisV.elemento(i);
-      b=tieneCiclo(act, act, visitado, grafo, longi); //Mando como aux al lisV.proximo() para que no se toque el act y el aux al principio
+      b=tieneCiclo(act, lisV.proximo(), visitado, grafo, longi); //Mando como aux al lisV.proximo() para que no se toque el act y el aux al principio
       //No importa que en el ultimo llamado del for mande null el proximo, total su valor no lo uso hasta que recursa
       i++;
     }
@@ -120,28 +123,32 @@ public class Algoritmos<T>{
 
  //siempre mando el mismo actual. Lo que hago es revisar todas sus aristas para ver si alguna se conecta consigo misma
  private boolean tieneCiclo(Vertice<T>actual, Vertice<T> aux, boolean[] visitado, Grafo<T> grafo, int longi){
-
-  if(actual.dato().equals(aux.dato()) && longi!=0){
-    return true;
-  }
-
   boolean b=false;
-  visitado[aux.posicion()]=true;
-  ListaGenerica<Arista<T>> ady= grafo.listaDeAdyacentes(actual);
-  Vertice<T> sig;
-  while(!ady.fin()){
-   sig=ady.proximo().verticeDestino();
-   int pos= sig.posicion();
-   longi++;
-    if(!visitado[pos]){
-      b=tieneCiclo(actual, sig, visitado, grafo, longi);
-      if(b==true)
-        return true; // Como debe buscar al menos un ciclo, al encontrar uno solo lo hago salir de la recursion
-      visitado[pos]=false;  
-      longi--;
-    }
+
+  if(!actual.dato().equals(aux.dato()))
+    visitado[aux.posicion()]=true;
+
+  if(actual.dato().equals(aux.dato()) && longi>0){
+    return true;
+  }else{
+
+  
+  
+  ListaGenerica<Arista<T>> ady= grafo.listaDeAdyacentes(aux);
+  ady.comenzar();
+  longi++;
+  
+  while(!ady.fin() && b==false){
+  Arista<T> sig=ady.proximo();
+   int pos= sig.verticeDestino().posicion();
+
+   if(!visitado[pos])
+      b=tieneCiclo(actual, sig.verticeDestino(), visitado, grafo, longi);
+
+    visitado[pos]=false;  
   }
-  return false;
+}
+  return b;
  }
 
 
