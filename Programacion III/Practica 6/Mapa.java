@@ -117,7 +117,7 @@ public ListaGenerica<String> devolverCamino(String ciudad1, String ciudad2){
     visitado[vActual.posicion()]=true;  
     
     if(vActual.dato().equals(destino) && !pertenece(vActual.dato(),ciudades)){  
-      listaCamino.agregarInicio(vActual.dato());
+      listaCamino.agregarInicio(vActual.dato()); 
   
     }else{
       ListaGenerica<Arista<String>> ady= mapaCiudades.listaDeAdyacentes(vActual);
@@ -157,14 +157,15 @@ public ListaGenerica<String> devolverCamino(String ciudad1, String ciudad2){
 public ListaGenerica<String> caminoMasCorto(String ciudad1, String ciudad2){
   ListaGenerica<String> listaCorto= new ListaGenericaEnlazada<String>();
   ListaGenerica<String> posibleMin= new ListaGenericaEnlazada<String>();
+
   if(!mapaCiudades.esVacio()){
     boolean[] visitado= new boolean[mapaCiudades.listaDeVertices().tamanio()];
     Vertice<String> origen =devolverVerice(ciudad1);
+  
     if(origen.dato().equals(ciudad2)){
       int min=9999;
       int pesoActual=0;
       caminoMasCorto(listaCorto, origen, min, ciudad2, visitado, posibleMin, pesoActual);
-
     }
   }
   return listaCorto;
@@ -176,18 +177,19 @@ private int caminoMasCorto(ListaGenerica<String> listaCorto, Vertice<String> act
   posibleMin.agregarFinal(actual.dato());
   
   if(actual.dato().equals(c2)){
-    visitado[actual.posicion()]=false; //Asi otros caminos pueden llegar de vuelta a esta ciudad
+  //  visitado[actual.posicion()]=false; //Asi otros caminos pueden llegar de vuelta a esta ciudad
   
     if(min>pesoActual){
       listaCorto= clonar(posibleMin); //Como es mas corto clona la lista a la lista importante
-      posibleMin.eliminar(c2);
-      return pesoActual; // Hago que pesoActual sea por referencia
+    //  posibleMin.eliminar(actual.dato());
+      min= pesoActual;
     }
+    return min; // Hago que pesoActual sea por referencia
   }
 
   ListaGenerica<Arista<String>> ady= mapaCiudades.listaDeAdyacentes(actual);
   ady.comenzar();  
-    
+  
   while(!ady.fin()){
     Arista<String> siguiente= ady.proximo();
     pesoActual+=siguiente.peso(); //Solo lo uso para saber cual de los caminos esta mas cerca. 
@@ -195,12 +197,14 @@ private int caminoMasCorto(ListaGenerica<String> listaCorto, Vertice<String> act
     if(!visitado[siguiente.verticeDestino().posicion()]){
       min=caminoMasCorto(listaCorto, siguiente.verticeDestino(), min, c2, visitado, posibleMin, pesoActual); //Devuelve el min asi lo puedo mantener actualizado
     }
+    if(posibleMin.tamanio()>1)//no quiero eliminar el origen de la lista en caso de tener que borrarla
+      posibleMin.eliminarEn(posibleMin.tamanio()-1);
+    //Elimino en la lista temporal el actual, pero fuera del while porque tal vez en el mismo camino, con otra arista llega antes
     visitado[siguiente.verticeDestino().posicion()]=false; //Desmarco por si otro camino pasa por aca de vuelta
     pesoActual-=siguiente.peso();
     }  
     
-    posibleMin.eliminar(actual.dato()); //Elimino en la lista temporal el actual, pero fuera del while porque tal vez en el mismo camino, con otra arista llega antes
-    return pesoActual;
+    return min;
 }
 
 
