@@ -22,18 +22,18 @@ public class Delta<String>{
     visitado[act.posicion()]=true;
     int islaproximavisitada=0;
     ListaGenerica<Arista<String>> ady= grafo.listaDeAdyacentes(act);
-    cant++;
     Arista<String> proxima;
     
     while(!ady.fin()){
       proxima=ady.proximo();
   
       if(!visitado[proxima.verticeDestino().posicion()]){
+        cant++;
         max=maxIslasDistintas(grafo, visitado, proxima.verticeDestino(),cant, max);
         islaproximavisitada++;
+        cant--;
     }
   }
-  
   if(islaproximavisitada==0){
     if(cant>max){
       max=cant;

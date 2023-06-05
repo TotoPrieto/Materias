@@ -51,6 +51,10 @@ public class DeltaTest {
        islas.conectar(v7, v8, 1);
 
         Delta<String> d = new Delta<String>();
+      //  ListaGenerica<String> l= d.maxIslasDistintas(islas);
+        //for(int i=0; i<l.tamanio();i++){
+        //  System.out.print(l.elemento(i)+"-->");
+      //  }
          System.out.println("La cantidad maxima de islas a visitar con 1 boleto es de: "+d.maxIslasDistintas(islas));
         //RutaMinima rutaMinima = new RutaMinima();
         //rutaMinima=d.caminoMasCorto(islas, "isla 4", "isla 1");
