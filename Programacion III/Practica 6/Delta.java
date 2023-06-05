@@ -12,38 +12,47 @@ public class Delta<String>{
     if((grafo!=null)&&(!grafo.esVacio())){
       ListaGenerica<Vertice<String>> listaV=grafo.listaDeVertices();
       boolean visitado[]=new boolean[listaV.tamanio()];
-      resultado=maxIslasDistintas(grafo, visitado, listaV.elemento(0),cant, resultado);
+      resultado=maxIslasDistintas(grafo, visitado, listaV.elemento(0),cant)-1;
     }
   
     return resultado;
   } 
 
-  private int maxIslasDistintas(Grafo<String> grafo, boolean[] visitado, Vertice<String> act, int cant,int max){
-    visitado[act.posicion()]=true;
+  private int maxIslasDistintas(Grafo<String> grafo, boolean[] visitado, Vertice<String> act, int cant){
     int islaproximavisitada=0;
+    visitado[act.posicion()]=true;
     ListaGenerica<Arista<String>> ady= grafo.listaDeAdyacentes(act);
     Arista<String> proxima;
-    
-    while(!ady.fin()){
+    ady.comenzar();
+    int mayor=0,may=0;
+    while(!ady.fin() && ady!=null){
+  
       proxima=ady.proximo();
-  
       if(!visitado[proxima.verticeDestino().posicion()]){
-        cant++;
-        max=maxIslasDistintas(grafo, visitado, proxima.verticeDestino(),cant, max);
+        may=maxIslasDistintas(grafo, visitado, proxima.verticeDestino(),cant+1)+1;
         islaproximavisitada++;
-        cant--;
-    }
+        if(mayor<may)
+          mayor=may;
+      }
   }
+  visitado[act.posicion()]=false;
+  
   if(islaproximavisitada==0){
-    if(cant>max){
-      max=cant;
+    return 1; // caso base devuelve 1. Suma la cantidad recursivamente
+    }else{
+      return mayor;
     }
   }
   
-  visitado[act.posicion()]=false;
-  return max;
-  }
 
+
+
+//  ----------------------------------------------------------------------------------------------
+  public RutaMinima caminoMasCorto(Grafo<String> grafo, String islaO, String islaD){
+
+
+    
+  }
 
 
 }
