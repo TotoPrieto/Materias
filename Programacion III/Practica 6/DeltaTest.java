@@ -9,7 +9,7 @@ public class DeltaTest {
         Vertice<String> v5 = new VerticeImplListAdy<String>("isla 5");  
         Vertice<String> v6 = new VerticeImplListAdy<String>("isla 6");  
         Vertice<String> v7 = new VerticeImplListAdy<String>("isla 7");  
-
+        Vertice<String> v8 = new VerticeImplListAdy<String>("isla 8");  
         Grafo<String> islas = new GrafoImplListAdy<String>();
        islas.agregarVertice(v0);
        islas.agregarVertice(v1);
@@ -19,6 +19,8 @@ public class DeltaTest {
        islas.agregarVertice(v5);
        islas.agregarVertice(v6); 
        islas.agregarVertice(v7); 
+       islas.agregarVertice(v8); 
+ 
 
        islas.conectar(v0, v1, 1);//adyacentes a MP
        islas.conectar(v1, v0, 1);
@@ -44,7 +46,9 @@ public class DeltaTest {
        islas.conectar(v5, v6, 1);
        islas.conectar(v6, v5, 1);
        islas.conectar(v5, v7, 1);
-       islas.conectar(v7, v5, 1);
+       islas.conectar(v7, v5, 1);      
+       islas.conectar(v8, v7, 1);
+       islas.conectar(v7, v8, 1);
 
         Delta<String> d = new Delta<String>();
          System.out.println("La cantidad maxima de islas a visitar con 1 boleto es de: "+d.maxIslasDistintas(islas));
