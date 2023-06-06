@@ -92,6 +92,15 @@ public abstract class ListaGenerica<T> {
 	public abstract int tamanio();
 
 
-	public abstract ListaGenerica<T> copiar();
+	public ListaGenerica<T> clonar() {
+		ListaGenerica<T> clon = new ListaGenericaEnlazada<T>();
+		clon.comenzar();
+		this.comenzar();
+
+		while (!this.fin()) {
+			clon.agregarFinal(this.proximo());
+		}
+		return clon;
+	}
 
 }
