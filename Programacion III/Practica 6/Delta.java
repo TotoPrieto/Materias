@@ -1,4 +1,4 @@
-public class Delta<T>{
+public class Delta{
 
 
 
@@ -53,32 +53,29 @@ public class Delta<T>{
 //para completar el recorrido.
 
   public RutaMinima caminoMasCorto(Grafo<String> grafo, String islaO, String islaD){
-      RutaMinima posibleRuta=new RutaMinima();
+      ListaGenerica<String> posibleRuta=new ListaGenericaEnlazada<String>();
       RutaMinima ruta=new RutaMinima();
       if(!grafo.esVacio()){
         boolean[] visitado= new boolean[grafo.listaDeVertices().tamanio()];
         Vertice<String> origen =devolverVerice(grafo, islaO);
       
-        if(origen.dato().equals(islaD)){
-          caminoMasCorto(grafo, ruta, origen, posibleRuta, islaD, visitado);
+        if(origen.dato().equals(islaO)){
+          caminoMasCorto(grafo, ruta, origen, posibleRuta, 1, islaD, visitado);
         }
       }
       return ruta;
     }
     
     //Lo hago que devuelva un int para poder alterar el minimo, y encontrar el mas corto. La lista al ser dinamica se devuelve sola.
-    private void caminoMasCorto(Grafo<String> grafo, RutaMinima ruta ,Vertice<String> actual, RutaMinima posibleMin, String i2, boolean[] visitado){
+    private void caminoMasCorto(Grafo<String> grafo, RutaMinima ruta ,Vertice<String> actual, ListaGenerica<String> posibleMin,int boletos, String i2, boolean[] visitado){
       visitado[actual.posicion()]=true;
-      posibleMin.getLista().agregarInicio(actual.dato());
-      
-      if(actual.posicion()==0)
-        posibleMin.agregarBoletos(); //Por si pasa por el muelle agrego 1 boleto
+      posibleMin.agregarFinal(actual.dato());
+    
 
       if(actual.dato().equals(i2)){ //Si llega al destino      
-        if(ruta.getLista().tamanio()>posibleMin.getLista().tamanio()){ // Compara tamanio de lista
-          ruta.setLista(posibleMin.getLista().copiar());;
-          posibleMin.getLista().eliminar(actual.dato());
-          ruta.setBoletos(posibleMin.getBoletos());
+        if((ruta.getLista().tamanio()==0) || ruta.getLista().tamanio()>posibleMin.tamanio()){ // El tamanio al inicio va a ser 0, por eso primer condicion
+          ruta.setLista(posibleMin.clonar());
+          ruta.setBoletos(boletos);
         }
       }else{ 
         ListaGenerica<Arista<String>> ady= grafo.listaDeAdyacentes(actual);
@@ -87,17 +84,17 @@ public class Delta<T>{
         while(!ady.fin()){
           Arista<String> siguiente= ady.proximo();
           if(!visitado[siguiente.verticeDestino().posicion()]){
-            caminoMasCorto(grafo ,ruta, siguiente.verticeDestino(), posibleMin, i2, visitado); //Devuelve el min asi lo puedo mantener actualizado
-            posibleMin.getLista().eliminarEn(siguiente.verticeDestino().posicion());
-            visitado[siguiente.verticeDestino().posicion()]=false; //Desmarco por si otro camino pasa por aca de vuelta
-          }
+            if(siguiente.verticeDestino().posicion()==0)// si va a pasar por el muelle suma
+              boletos++; 
+            caminoMasCorto(grafo ,ruta, siguiente.verticeDestino(), posibleMin, boletos,i2, visitado); //Devuelve el min asi lo puedo mantener actualizado
+            if(siguiente.verticeDestino().posicion()==0)// si va a pasar por el muelle suma
+              boletos--; // Queda medio choto esto, pero ya no lo quiero tocas mas. Si sumo, lo saco porque sino en el while aunque no pase por muelle, ya tiene sumado 1
+            }
           }  
-          
-          if(actual.posicion()==0)
-          posibleMin.eliminarBoletos(); //Por si pasa por el muelle agrego 1 boleto
   
-    }
-  
+      }
+      visitado[actual.posicion()]=false; //Desmarco por si otro camino pasa por aca de vuelta
+      posibleMin.eliminarEn(posibleMin.tamanio()-1);
   }
 
     
