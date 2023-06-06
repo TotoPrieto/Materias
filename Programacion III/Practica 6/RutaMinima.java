@@ -5,15 +5,16 @@ public class RutaMinima{
 
   public RutaMinima(){
     caminoMasCorto=new ListaGenericaEnlazada<String>();
-    cantBoletos=1;
+    cantBoletos=0;
   }
 
   public ListaGenerica<String> getLista(){
+    caminoMasCorto.comenzar();
     return caminoMasCorto;
   }
 
-  public void setLista(ListaGenerica<String> listaGenerica){
-    this.caminoMasCorto=listaGenerica;
+  public void setLista(ListaGenerica<String> lista){
+    this.caminoMasCorto=lista;
   }
 
   public int getBoletos(){
@@ -28,9 +29,12 @@ public class RutaMinima{
     cantBoletos--;  
   }
 
-  
+
   public void setBoletos(int i){
     cantBoletos=i;
   }
+
+
+
 }
 
