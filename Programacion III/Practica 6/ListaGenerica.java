@@ -91,7 +91,9 @@ public abstract class ListaGenerica<T> {
 	 * */
 	public abstract int tamanio();
 
+	public abstract ListaGenerica<T> clonar();
 
+/* 
 	public ListaGenerica<T> clonar() {
 		ListaGenerica<T> clon = new ListaGenericaEnlazada<T>();
 		clon.comenzar();
@@ -102,5 +104,5 @@ public abstract class ListaGenerica<T> {
 		}
 		return clon;
 	}
-
+*/
 }
