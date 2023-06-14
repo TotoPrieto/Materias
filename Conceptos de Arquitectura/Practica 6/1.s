@@ -1,29 +1,35 @@
-.data
+  .data
+CONTROL:        .word32 0x10000
+DATA:           .word32 0x10008
+cadena:         .byte 0
 
-CONTROL:    .word32 0x10000
-DATA:       .word32 0x10008
-cadena:     .byte0
+  .text
+lwu             $s0, DATA(r0) ; $s0 = dirección de DATA
+lwu             $s1, CONTROL(r0) ; $s1 = dirección de CONTROL
+daddi           $s2, $zero, 46 ; $s2 valor del punto
+daddi           $s3, $zero, cadena
 
-.text
-ld          $s0, CONTROL(r0) ; $s1 = dirección de CONTROL
-ld          $s1, DATA(r0); $s0 = direccion de DATA
+LOOP:
+daddi           $t0, $0, 9 ; $t0 = 9 -> función 9: espera por un ASCII
+sb              $t0, 0($s1) ; CONTROL recibe 9 y espera por el ASCII (el cual es almacenado en DATA)
 
- 
-daddi       $t0, $0, 9 ; $t0 = 9 -> función 9:lee data desde teclado
-sd          $t0, 0($s0) ; CONTROL = 9 
-lbu         $t1, 0($s1) ;toma el caracter de control y lo pone en $t1
+lbu             $t1, 0($s0) ;$t1 -> caracter de control 
 
-sb          $t1, cadena($0) ;carga en cadena el caracter
+beq             $t1, $s2, fin ; Termina cuando se ingresa '.'
 
-daddi       $s3,$s0,cadena
+dadd            $t0, $0, $s3 ; obtengo direccion donde guardo
+sb              $t1, 0($t0); almaceno
 
-sd          $
+dadd            $t0, $0, $s3 ; $t0 = dirección del mensaje a mostrar
+sd              $t0, 0($s0) ; DATA recibe el direccion del mensaje
 
-sd          $t3, 0($s0); Guarda mensaje en DATA
-daddi       $t0, $0, 6 ; $t0 = 6 -> función 6: limpiar pantalla alfanumérica
-sd          $t0, 0($s1) ; CONTROL recibe 6 y limpia la pantalla
-daddi       $t0, $0, 4 ; $t0 = 4 -> función 4:lee data desde teclado
-sd          $t0, 0($s1) ; CONTROL recibe 4 y produce la salida del mensaje
-sd          $t1, 0($s0)
+daddi           $t0, $0, 4 ; $t0 = 4 -> caracter ASCII
+sd              $t0, 0($s1) ; CONTROL recibe 4 , imprime
+daddi           $s3, $s3, 8; Siguiente direccion donde se guarda letra por letra
 
-halt
+j               LOOP
+
+fin: halt
+
+
+
