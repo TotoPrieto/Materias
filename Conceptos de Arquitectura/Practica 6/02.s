@@ -56,7 +56,7 @@ j	           	 FIN
 
 FINMALO:
 
-daddi          $t0, $t1, ERROR ; carga el mensaje de error en DATA
+daddi          $t0, $0, ERROR ; carga el mensaje de error en DATA
 sd             $t0, 0($s0)
 
 FIN:
